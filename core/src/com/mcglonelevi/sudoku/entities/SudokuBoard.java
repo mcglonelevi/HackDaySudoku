@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.mcglonelevi.sudoku.util.FontGenerator;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -28,8 +29,7 @@ public class SudokuBoard implements InputProcessor {
     public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray) {
         this.sudokuArray = sudokuArray;
 
-        this.font = new BitmapFont();
-        font.setColor(Color.BLACK);
+        this.font = FontGenerator.generateFont(Gdx.files.internal("hemi-head-semi-bold.ttf"));
 
         this.cam = cam;
         tiles = new Tile[9][9];

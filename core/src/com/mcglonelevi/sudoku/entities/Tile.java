@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Align;
 
 public class Tile {
+    public static final Color NOT_SELECTABLE_COLOR = new Color(0, 0, 0, 1);
+    public static final Color SELECTABLE_COLOR = new Color(1, 1, 1, 1);
     public static final int TILE_SIZE = 64;
     public static final int TILE_SPACING = 3;
     public static final int BOX_SPACING = 3;
@@ -27,7 +29,7 @@ public class Tile {
         this.number = number;
         this.tileTexture = tileTexture;
         this.drawPosition = calculateDrawPosition(x, y);
-        this.textDrawPosition = new Vector2(this.drawPosition.x + 32, this.drawPosition.y + 36);
+        this.textDrawPosition = new Vector2(this.drawPosition.x + 32, this.drawPosition.y + 40);
         this.font = font;
         this.selectable = number == null;
     }
@@ -49,14 +51,15 @@ public class Tile {
 
     public void draw(SpriteBatch batch, boolean selected) {
         if (selected) {
-            batch.setColor(Color.YELLOW);
+            batch.setColor(Color.valueOf("FB5607"));
+        } else {
+            batch.setColor(Color.valueOf("3A86FF"));
         }
         batch.draw(tileTexture, drawPosition.x, drawPosition.y);
-        if (selected) {
-            batch.setColor(Color.WHITE);
-        }
 
         if (number != null) {
+            batch.setColor(Color.WHITE);
+            font.setColor(this.selectable ? SELECTABLE_COLOR : NOT_SELECTABLE_COLOR);
             font.draw(batch, String.valueOf(this.number), this.textDrawPosition.x, this.textDrawPosition.y, 0, Align.center, false);
         }
     }
