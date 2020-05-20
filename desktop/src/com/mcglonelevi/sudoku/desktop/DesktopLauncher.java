@@ -7,8 +7,8 @@ import com.mcglonelevi.sudoku.SudokuGame;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.height = 640;
-		config.width = 640;
+		config.height = 606;
+		config.width = 606;
 		new LwjglApplication(new SudokuGame(), config);
 	}
 }

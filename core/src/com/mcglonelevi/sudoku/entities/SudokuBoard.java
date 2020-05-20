@@ -1,58 +1,243 @@
 package com.mcglonelevi.sudoku.entities;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
-public class SudokuBoard {
+import java.util.HashSet;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+public class SudokuBoard implements InputProcessor {
     Tile[][] tiles;
     Texture tileTexture;
-    int[][] sudokuArray = {
+    Vector2 selectedTile = null;
+    OrthographicCamera cam;
+    Pattern keyRegex = Pattern.compile("[1-9]");
+    BitmapFont font;
+    private boolean hasWon = false;
+    Integer[][] sudokuArray = {
             {
-                    4, 6, 1, 8, 3, 9, 5, 2, 7
+                7, null, null, null, null, 8, 1, 6, null
             },
             {
-                    3, 8, 9, 2, 7, 5, 1, 4, 6
+                null, 4, null, 5, null, 2, 9, 8, null
             },
             {
-                    5, 2, 7, 6, 4, 1, 9, 8, 3
+                3, null, 9, null, 4, null, null, null, null
             },
             {
-                    2, 5, 8, 1, 6, 7, 3, 9, 4
+                null, null, 3, null, 6, 1, null, null, 2
             },
             {
-                    6, 7, 3, 9, 8, 4, 2, 5, 1
+                1, 5, null, null, null, null, null, 7, 6
             },
             {
-                    9, 1, 4, 5, 2, 3, 6, 7, 8
+                8, null, null, 3, 2, null, 4, null, null
             },
             {
-                    7, 4, 5, 3, 9, 6, 8, 1, 2
+                null, null, null, null, 9, null, 5, null, 7
             },
             {
-                    8, 9, 6, 4, 1, 2, 7, 3, 5
+                null, 3, 7, 2, null, 4, null, 9, null
             },
             {
-                    1, 3, 2, 7, 5, 8, 4, 6, 9
+                null, 6, 4, 8, null, null, null, null, 1
             }
     };
 
-    public SudokuBoard() {
+    public SudokuBoard(OrthographicCamera cam) {
+        this.font = new BitmapFont();
+        font.setColor(Color.BLACK);
+
+        this.cam = cam;
         tiles = new Tile[9][9];
         tileTexture = new Texture(Gdx.files.internal("tile.png"));
 
         for (int x = 0; x < sudokuArray.length; x++) {
-            for (int y = 0; y < sudokuArray.length; y++) {
-                tiles[x][y] = new Tile(x, y, sudokuArray[x][y], tileTexture);
+            for (int y = 0; y < sudokuArray[x].length; y++) {
+                tiles[x][y] = new Tile(x, y, sudokuArray[x][y], tileTexture, font);
             }
         }
     }
 
     public void draw(SpriteBatch batch) {
         for (int x = 0; x < sudokuArray.length; x++) {
-            for (int y = 0; y < sudokuArray.length; y++) {
-                tiles[x][y].draw(batch);
+            for (int y = 0; y < sudokuArray[x].length; y++) {
+                tiles[x][y].draw(batch, this.selectedTile != null && this.selectedTile.x == x && this.selectedTile.y == y);
             }
         }
+    }
+
+    public boolean isGameOver() {
+        return hasWon;
+    }
+
+    private boolean isValid() {
+        return validateRows() && validateColumns() && validateBoxes();
+    }
+
+    private boolean validateRows() {
+        for (int x = 0; x < tiles.length; x++) {
+            Set<Integer> rowSet = new HashSet<>();
+
+            for (int y = 0; y < tiles[x].length; y++) {
+                if (tiles[x][y].number == null) {
+                    return false;
+                }
+
+                rowSet.add(tiles[x][y].number);
+            }
+
+            if (rowSet.size() != 9) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validateColumns() {
+        for (int y = 0; y < tiles.length; y++) {
+            Set<Integer> columnSet = new HashSet<>();
+
+            for (int x = 0; x < tiles[y].length; x++) {
+                if (tiles[x][y].number == null) {
+                    return false;
+                }
+
+                columnSet.add(tiles[x][y].number);
+            }
+
+            if (columnSet.size() != 9) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private boolean validateBoxes() {
+        for (int xBox = 0; xBox < 3; xBox++) {
+            for (int yBox = 0; yBox < 3; yBox++) {
+                int xOffset = xBox * 3;
+                int yOffset = yBox * 3;
+
+                Set<Integer> boxSet = new HashSet<>();
+
+                for (int x = xOffset; x < xOffset + 3; x++) {
+                    for (int y = yOffset; y < yOffset + 3; y++) {
+                        if (tiles[x][y].number == null) {
+                            return false;
+                        }
+
+                        boxSet.add(tiles[x][y].number);
+                    }
+                }
+
+                if (boxSet.size() != 9) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        if (selectedTile != null) {
+            if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
+                String keyString = Input.Keys.toString(keycode);
+                if (keyRegex.matcher(keyString).matches()) {
+                    tiles[(int) selectedTile.x][(int) selectedTile.y].number = Integer.parseInt(keyString);
+                    selectedTile = null;
+                    updateWonState();
+                    return true;
+                }
+            } else if (keycode == Input.Keys.BACKSPACE) {
+                tiles[(int) selectedTile.x][(int) selectedTile.y].number = null;
+                selectedTile = null;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    void updateWonState() {
+        hasWon = isValid();
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        String characterString = String.valueOf(character);
+        if (selectedTile != null && keyRegex.matcher(characterString).matches()) {
+            tiles[(int) selectedTile.x][(int) selectedTile.y].number = Integer.parseInt(characterString);
+            selectedTile = null;
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        Vector3 unprojectedCoordinates = cam.unproject(new Vector3(screenX, screenY, 0));
+
+        boolean tileSelected = false;
+
+        outerloop:
+        for (int x = 0; x < tiles.length; x++) {
+            for (int y = 0; y < tiles[x].length; y++) {
+                if (tiles[x][y].isSelectable() && tiles[x][y].isInDrawBounds((int) unprojectedCoordinates.x, (int) unprojectedCoordinates.y)) {
+                    if (this.selectedTile != null && this.selectedTile.x == x && this.selectedTile.y == y) {
+                        this.selectedTile = null;
+                    } else {
+                        this.selectedTile = new Vector2(x, y);
+                    }
+                    tileSelected = true;
+                    break outerloop;
+                }
+            }
+        }
+
+        if (!tileSelected) {
+            this.selectedTile = null;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(int amount) {
+        return false;
     }
 }

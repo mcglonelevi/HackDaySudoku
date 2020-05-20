@@ -14,18 +14,22 @@ public class Tile {
 
     int x;
     int y;
-    int number;
+    Integer number;
     Texture tileTexture;
     Vector2 drawPosition;
     Vector2 textDrawPosition;
+    BitmapFont font;
+    boolean selectable;
 
-    public Tile(int x, int y, int number, Texture tileTexture) {
+    public Tile(int x, int y, Integer number, Texture tileTexture, BitmapFont font) {
         this.x = x;
         this.y = y;
         this.number = number;
         this.tileTexture = tileTexture;
         this.drawPosition = calculateDrawPosition(x, y);
         this.textDrawPosition = new Vector2(this.drawPosition.x + 32, this.drawPosition.y + 36);
+        this.font = font;
+        this.selectable = number == null;
     }
 
     public Vector2 calculateDrawPosition(int x, int y) {
@@ -35,10 +39,25 @@ public class Tile {
         );
     }
 
-    public void draw(SpriteBatch batch) {
-        batch.draw(tileTexture, this.drawPosition.x, this.drawPosition.y);
-        BitmapFont font = new BitmapFont();
-        font.setColor(Color.BLACK);
-        font.draw(batch, String.valueOf(this.number), this.textDrawPosition.x, this.textDrawPosition.y, 0, Align.center, false);
+    public boolean isSelectable() {
+        return selectable;
+    }
+
+    public boolean isInDrawBounds(int x, int y) {
+        return x > drawPosition.x && x < drawPosition.x + TILE_SIZE && y > drawPosition.y && y < drawPosition.y + TILE_SIZE;
+    }
+
+    public void draw(SpriteBatch batch, boolean selected) {
+        if (selected) {
+            batch.setColor(Color.YELLOW);
+        }
+        batch.draw(tileTexture, drawPosition.x, drawPosition.y);
+        if (selected) {
+            batch.setColor(Color.WHITE);
+        }
+
+        if (number != null) {
+            font.draw(batch, String.valueOf(this.number), this.textDrawPosition.x, this.textDrawPosition.y, 0, Align.center, false);
+        }
     }
 }
