@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.mcglonelevi.sudoku.entities.SudokuBoard;
+import com.mcglonelevi.sudoku.util.SudokuAPI;
 
 public class SudokuGame extends ApplicationAdapter {
 	private SpriteBatch batch;
@@ -20,7 +21,7 @@ public class SudokuGame extends ApplicationAdapter {
 		cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
 		cam.update();
 
-		sudokuBoard = new SudokuBoard(cam);
+		sudokuBoard = new SudokuBoard(cam, SudokuAPI.getSudokuBoard());
 
 		Gdx.input.setInputProcessor(sudokuBoard);
 	}

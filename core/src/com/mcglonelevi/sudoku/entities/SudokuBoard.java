@@ -23,37 +23,11 @@ public class SudokuBoard implements InputProcessor {
     Pattern keyRegex = Pattern.compile("[1-9]");
     BitmapFont font;
     private boolean hasWon = false;
-    Integer[][] sudokuArray = {
-            {
-                7, null, null, null, null, 8, 1, 6, null
-            },
-            {
-                null, 4, null, 5, null, 2, 9, 8, null
-            },
-            {
-                3, null, 9, null, 4, null, null, null, null
-            },
-            {
-                null, null, 3, null, 6, 1, null, null, 2
-            },
-            {
-                1, 5, null, null, null, null, null, 7, 6
-            },
-            {
-                8, null, null, 3, 2, null, 4, null, null
-            },
-            {
-                null, null, null, null, 9, null, 5, null, 7
-            },
-            {
-                null, 3, 7, 2, null, 4, null, 9, null
-            },
-            {
-                null, 6, 4, 8, null, null, null, null, 1
-            }
-    };
+    Integer[][] sudokuArray;
 
-    public SudokuBoard(OrthographicCamera cam) {
+    public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray) {
+        this.sudokuArray = sudokuArray;
+
         this.font = new BitmapFont();
         font.setColor(Color.BLACK);
 
