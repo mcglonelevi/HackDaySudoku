@@ -87,8 +87,9 @@ public class SudokuSolver {
                     columnSets.get(y).add(number);
                     boxSets.get(determineBox(x, y)).add(number);
                     modified = true;
-                } else {
-                    cellSet.removeAll(getSetForOtherEmptyCellsInBox(x, y));
+                }
+                else {
+                    cellSet.removeAll(getIntersectionSetForOtherEmptyCellsInBox(x, y));
 
                     if (cellSet.size() == 1) {
                         Integer number = (Integer) cellSet.toArray()[0];
@@ -105,14 +106,18 @@ public class SudokuSolver {
         return modified;
     }
 
-     Set<Integer> getSetForOtherEmptyCellsInBox(int x, int y) {
+     Set<Integer> getIntersectionSetForOtherEmptyCellsInBox(int x, int y) {
         int boxX = x / 3;
         int boxY = y / 3;
 
         Set<Integer> combinedSet = new HashSet<>();
 
-        for (int scanX = boxX * 3; scanX < boxX + 3; scanX++) {
-            for (int scanY = boxY * 3; scanY < boxY + 3; scanY++) {
+         System.out.println("SCAN GROUPING FOR " + x + ", " + y);
+         System.out.println("Box X: " + boxX);
+         System.out.println("Box Y: " + boxY);
+        for (int scanX = boxX * 3; scanX < boxX * 3 + 3; scanX++) {
+            for (int scanY = boxY * 3; scanY < boxY * 3 + 3; scanY++) {
+                System.out.println(scanX + ", " + scanY);
                 if ((scanX == x && scanY == y) || (board[x][y] != null)) {
                     continue;
                 }
