@@ -19,7 +19,7 @@ public class Tile {
     Integer number;
     Texture tileTexture;
     Vector2 drawPosition;
-    Vector2 textDrawPosition;
+    public Vector2 textDrawPosition;
     BitmapFont font;
     boolean selectable;
 

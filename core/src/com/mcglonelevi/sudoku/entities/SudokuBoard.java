@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -23,11 +24,15 @@ public class SudokuBoard implements InputProcessor {
     OrthographicCamera cam;
     Pattern keyRegex = Pattern.compile("[1-9]");
     BitmapFont font;
+    ParticleEffect effect;
     private boolean hasWon = false;
     Integer[][] sudokuArray;
 
     public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray) {
         this.sudokuArray = sudokuArray;
+
+        this.effect = new ParticleEffect();
+        effect.load(Gdx.files.internal("smoke.pfx"), Gdx.files.internal(""));
 
         this.font = FontGenerator.generateFont(Gdx.files.internal("hemi-head-semi-bold.ttf"));
 
@@ -48,6 +53,8 @@ public class SudokuBoard implements InputProcessor {
                 tiles[x][y].draw(batch, this.selectedTile != null && this.selectedTile.x == x && this.selectedTile.y == y);
             }
         }
+
+        effect.draw(batch, Gdx.graphics.getDeltaTime());
     }
 
     public boolean isGameOver() {
@@ -128,22 +135,34 @@ public class SudokuBoard implements InputProcessor {
     @Override
     public boolean keyDown(int keycode) {
         if (selectedTile != null) {
+            Tile tile = tiles[(int) selectedTile.x][(int) selectedTile.y];
+
             if (keycode >= Input.Keys.NUM_1 && keycode <= Input.Keys.NUM_9) {
                 String keyString = Input.Keys.toString(keycode);
                 if (keyRegex.matcher(keyString).matches()) {
-                    tiles[(int) selectedTile.x][(int) selectedTile.y].number = Integer.parseInt(keyString);
+                    tile.number = Integer.parseInt(keyString);
                     selectedTile = null;
                     updateWonState();
+
                     return true;
                 }
             } else if (keycode == Input.Keys.BACKSPACE) {
-                tiles[(int) selectedTile.x][(int) selectedTile.y].number = null;
+                tile.number = null;
+
+                drawPoof(tile);
+
                 selectedTile = null;
+
                 return true;
             }
         }
 
         return false;
+    }
+
+    void drawPoof(Tile tile) {
+        effect.setPosition(tile.textDrawPosition.x, tile.textDrawPosition.y - 4);
+        effect.start();
     }
 
     void updateWonState() {
