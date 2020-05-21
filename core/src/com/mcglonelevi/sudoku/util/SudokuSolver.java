@@ -112,13 +112,9 @@ public class SudokuSolver {
 
         Set<Integer> combinedSet = new HashSet<>();
 
-         System.out.println("SCAN GROUPING FOR " + x + ", " + y);
-         System.out.println("Box X: " + boxX);
-         System.out.println("Box Y: " + boxY);
         for (int scanX = boxX * 3; scanX < boxX * 3 + 3; scanX++) {
             for (int scanY = boxY * 3; scanY < boxY * 3 + 3; scanY++) {
-                System.out.println(scanX + ", " + scanY);
-                if ((scanX == x && scanY == y) || (board[x][y] != null)) {
+                if ((scanX == x && scanY == y) || (board[scanX][scanY] != null)) {
                     continue;
                 }
 

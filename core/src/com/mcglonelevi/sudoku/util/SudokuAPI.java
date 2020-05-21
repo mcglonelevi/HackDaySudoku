@@ -35,7 +35,7 @@ public class SudokuAPI {
     private static String requestBoard() {
         HttpURLConnection con = null;
         try {
-            URL url = new URL("http://www.cs.utep.edu/cheon/ws/sudoku/new/?size=9&level=2");
+            URL url = new URL("http://www.cs.utep.edu/cheon/ws/sudoku/new/?size=9&level=1");
             con = (HttpURLConnection) url.openConnection();
             BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
             StringBuilder response = new StringBuilder();

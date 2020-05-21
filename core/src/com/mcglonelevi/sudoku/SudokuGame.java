@@ -14,6 +14,8 @@ import com.mcglonelevi.sudoku.entities.SudokuBoard;
 import com.mcglonelevi.sudoku.util.SudokuAPI;
 import com.mcglonelevi.sudoku.util.SudokuSolver;
 
+import java.util.Arrays;
+
 public class SudokuGame extends ApplicationAdapter {
 	private SpriteBatch batch;
 	private SudokuBoard sudokuBoard;
@@ -42,6 +44,7 @@ public class SudokuGame extends ApplicationAdapter {
 		menu = new Menu(listener, viewport);
 
 		Integer[][] sudokuPuzzle = SudokuAPI.getSudokuBoard();
+
 		if (sudokuPuzzle == null) {
 			Gdx.app.exit();
 			return;
@@ -49,6 +52,7 @@ public class SudokuGame extends ApplicationAdapter {
 
 		SudokuSolver solver = new SudokuSolver(sudokuPuzzle);
 		Integer[][] sudokuSolution = solver.solve();
+
 		sudokuBoard = new SudokuBoard(cam, sudokuPuzzle, sudokuSolution, viewport);
 
 		Gdx.input.setInputProcessor(menu.stage);
