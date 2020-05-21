@@ -28,15 +28,17 @@ public class SudokuBoard implements InputProcessor {
     ParticleEffect effect;
     private boolean hasWon = false;
     Integer[][] sudokuArray;
+    Integer[][] sudokuSolution;
     Viewport viewport;
     Sound poofSound;
     Sound popSound;
 
-    public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray, Viewport viewport) {
+    public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray, Integer[][] sudokuSolution, Viewport viewport) {
         this.viewport = viewport;
         this.sudokuArray = sudokuArray;
         this.poofSound = Gdx.audio.newSound(Gdx.files.internal("poof.mp3"));
         this.popSound = Gdx.audio.newSound(Gdx.files.internal("pop.mp3"));
+        this.sudokuSolution = sudokuSolution;
 
         this.effect = new ParticleEffect();
         effect.load(Gdx.files.internal("smoke.pfx"), Gdx.files.internal(""));

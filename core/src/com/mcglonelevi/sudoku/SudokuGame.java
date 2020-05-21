@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mcglonelevi.sudoku.entities.Menu;
 import com.mcglonelevi.sudoku.entities.SudokuBoard;
 import com.mcglonelevi.sudoku.util.SudokuAPI;
+import com.mcglonelevi.sudoku.util.SudokuSolver;
 
 public class SudokuGame extends ApplicationAdapter {
 	private SpriteBatch batch;
@@ -23,7 +24,6 @@ public class SudokuGame extends ApplicationAdapter {
 	InputListener listener = new InputListener(){
 		@Override
 		public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-			System.out.println("hit!");
 			playing = true;
 			Gdx.input.setInputProcessor(sudokuBoard);
 			return true;
@@ -41,7 +41,10 @@ public class SudokuGame extends ApplicationAdapter {
 
 		menu = new Menu(listener, viewport);
 
-		sudokuBoard = new SudokuBoard(cam, SudokuAPI.getSudokuBoard(), viewport);
+		Integer[][] sudokuPuzzle = SudokuAPI.getSudokuBoard();
+		SudokuSolver solver = new SudokuSolver(sudokuPuzzle);
+		Integer[][] sudokuSolution = solver.solve();
+		sudokuBoard = new SudokuBoard(cam, sudokuPuzzle, sudokuSolution, viewport);
 
 		Gdx.input.setInputProcessor(menu.stage);
 	}
