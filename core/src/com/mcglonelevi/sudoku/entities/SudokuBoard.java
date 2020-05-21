@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mcglonelevi.sudoku.util.FontGenerator;
 
 import java.util.HashSet;
@@ -27,8 +28,10 @@ public class SudokuBoard implements InputProcessor {
     ParticleEffect effect;
     private boolean hasWon = false;
     Integer[][] sudokuArray;
+    Viewport viewport;
 
-    public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray) {
+    public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray, Viewport viewport) {
+        this.viewport = viewport;
         this.sudokuArray = sudokuArray;
 
         this.effect = new ParticleEffect();
@@ -188,7 +191,7 @@ public class SudokuBoard implements InputProcessor {
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        Vector3 unprojectedCoordinates = cam.unproject(new Vector3(screenX, screenY, 0));
+        Vector3 unprojectedCoordinates = this.viewport.unproject(new Vector3(screenX, screenY, 0));
 
         boolean tileSelected = false;
 
