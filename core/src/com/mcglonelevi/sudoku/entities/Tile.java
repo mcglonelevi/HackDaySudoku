@@ -49,9 +49,11 @@ public class Tile {
         return x > drawPosition.x && x < drawPosition.x + TILE_SIZE && y > drawPosition.y && y < drawPosition.y + TILE_SIZE;
     }
 
-    public void draw(SpriteBatch batch, boolean selected) {
+    public void draw(SpriteBatch batch, boolean selected, boolean errored) {
         if (selected) {
             batch.setColor(Color.valueOf("FB5607"));
+        } else if (errored) {
+            batch.setColor(1, 0, 0, 1);
         } else {
             batch.setColor(Color.valueOf("3A86FF"));
         }

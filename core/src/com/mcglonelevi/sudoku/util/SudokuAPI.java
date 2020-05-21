@@ -15,7 +15,6 @@ public class SudokuAPI {
         String requestJson = requestBoard();
 
         if (requestJson == null) {
-            Gdx.app.exit();
             return null;
         } else {
             JsonReader jsonReader = new JsonReader();

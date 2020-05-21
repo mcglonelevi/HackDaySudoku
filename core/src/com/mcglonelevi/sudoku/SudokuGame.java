@@ -42,6 +42,11 @@ public class SudokuGame extends ApplicationAdapter {
 		menu = new Menu(listener, viewport);
 
 		Integer[][] sudokuPuzzle = SudokuAPI.getSudokuBoard();
+		if (sudokuPuzzle == null) {
+			Gdx.app.exit();
+			return;
+		}
+
 		SudokuSolver solver = new SudokuSolver(sudokuPuzzle);
 		Integer[][] sudokuSolution = solver.solve();
 		sudokuBoard = new SudokuBoard(cam, sudokuPuzzle, sudokuSolution, viewport);

@@ -14,6 +14,7 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.mcglonelevi.sudoku.util.FontGenerator;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -59,7 +60,12 @@ public class SudokuBoard implements InputProcessor {
     public void draw(SpriteBatch batch) {
         for (int x = 0; x < sudokuArray.length; x++) {
             for (int y = 0; y < sudokuArray[x].length; y++) {
-                tiles[x][y].draw(batch, this.selectedTile != null && this.selectedTile.x == x && this.selectedTile.y == y);
+                Integer number = tiles[x][y].number;
+                tiles[x][y].draw(
+                    batch,
+                    this.selectedTile != null && this.selectedTile.x == x && this.selectedTile.y == y,
+                    number != null && sudokuSolution[x][y] != null && !number.equals(sudokuSolution[x][y]) //sudokuSolution[x][y] != null is needed due to not having a well-posed game
+                );
             }
         }
 
