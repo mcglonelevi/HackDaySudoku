@@ -3,7 +3,7 @@ package com.mcglonelevi.sudoku.entities;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -29,10 +29,14 @@ public class SudokuBoard implements InputProcessor {
     private boolean hasWon = false;
     Integer[][] sudokuArray;
     Viewport viewport;
+    Sound poofSound;
+    Sound popSound;
 
     public SudokuBoard(OrthographicCamera cam, Integer[][] sudokuArray, Viewport viewport) {
         this.viewport = viewport;
         this.sudokuArray = sudokuArray;
+        this.poofSound = Gdx.audio.newSound(Gdx.files.internal("poof.mp3"));
+        this.popSound = Gdx.audio.newSound(Gdx.files.internal("pop.mp3"));
 
         this.effect = new ParticleEffect();
         effect.load(Gdx.files.internal("smoke.pfx"), Gdx.files.internal(""));
@@ -144,6 +148,7 @@ public class SudokuBoard implements InputProcessor {
                 String keyString = Input.Keys.toString(keycode);
                 if (keyRegex.matcher(keyString).matches()) {
                     tile.number = Integer.parseInt(keyString);
+                    popSound.play(1.0f);
                     selectedTile = null;
                     updateWonState();
 
@@ -164,6 +169,7 @@ public class SudokuBoard implements InputProcessor {
     }
 
     void drawPoof(Tile tile) {
+        this.poofSound.play(1.0f);
         effect.setPosition(tile.textDrawPosition.x, tile.textDrawPosition.y - 4);
         effect.start();
     }
