@@ -5,8 +5,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.mcglonelevi.sudoku.entities.Menu;
 import com.mcglonelevi.sudoku.entities.SudokuBoard;
 import com.mcglonelevi.sudoku.util.SudokuAPI;
 
@@ -15,6 +18,17 @@ public class SudokuGame extends ApplicationAdapter {
 	private SudokuBoard sudokuBoard;
 	private OrthographicCamera cam;
 	private Viewport viewport;
+	private boolean playing = false;
+	Menu menu;
+	InputListener listener = new InputListener(){
+		@Override
+		public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+			System.out.println("hit!");
+			playing = true;
+			Gdx.input.setInputProcessor(sudokuBoard);
+			return true;
+		}
+	};
 
 	@Override
 	public void create () {
@@ -25,9 +39,11 @@ public class SudokuGame extends ApplicationAdapter {
 		cam.position.set(cam.viewportWidth / 2f, cam.viewportHeight / 2f, 0);
 		cam.update();
 
+		menu = new Menu(listener, viewport);
+
 		sudokuBoard = new SudokuBoard(cam, SudokuAPI.getSudokuBoard(), viewport);
 
-		Gdx.input.setInputProcessor(sudokuBoard);
+		Gdx.input.setInputProcessor(menu.stage);
 	}
 
 	@Override
@@ -48,7 +64,11 @@ public class SudokuGame extends ApplicationAdapter {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		batch.begin();
 
-		sudokuBoard.draw(batch);
+		if (playing) {
+			sudokuBoard.draw(batch);
+		} else {
+			menu.draw();
+		}
 
 		batch.end();
 	}
